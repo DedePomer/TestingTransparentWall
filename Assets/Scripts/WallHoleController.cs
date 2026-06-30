@@ -8,36 +8,43 @@ public class WallHoleController : MonoBehaviour
     [SerializeField] private float holeRadius = 0.5f;
     [SerializeField] private LayerMask wallMask;
 
+    private float currentRadius = 0f;
+
     private static readonly int HolePosition = Shader.PropertyToID("_HolePosition");
     private static readonly int HoleRadius = Shader.PropertyToID("_HoleRadius");
     private void Update()
     {
-        RaycastHit hit;
+        //RaycastHit hit;
+        //bool didHit = Physics.SphereCast(
+        //    playerCamera.transform.position,
+        //    sphereRadius,
+        //    playerCamera.transform.forward,
+        //    out hit,
+        //    maxDistance,
+        //    wallMask);
 
-        if (Physics.SphereCast(
-                playerCamera.transform.position,
-                sphereRadius,
-                playerCamera.transform.forward,
-                out hit,
-                maxDistance,
-                wallMask))
-        {
-            Renderer renderer = hit.collider.GetComponent<Renderer>();
+        //// Плавное изменение радиуса
+        //float targetRadius = didHit ? holeRadius : 0f;
+        //currentRadius = Mathf.Lerp(currentRadius, targetRadius, Time.deltaTime * fadeSpeed);
 
-            Debug.Log("Hit");
+        //if (didHit)
+        //{
+        //    Renderer renderer = hit.collider.GetComponent<Renderer>();
 
-            if (renderer != null)
-            {
-                MaterialPropertyBlock block = new MaterialPropertyBlock();
+        //    Debug.Log("Hit");
 
-                renderer.GetPropertyBlock(block);
+        //    if (renderer != null)
+        //    {
+        //        MaterialPropertyBlock block = new MaterialPropertyBlock();
 
-                block.SetVector(HolePosition, hit.point);
-                block.SetFloat(HoleRadius, holeRadius);
+        //        renderer.GetPropertyBlock(block);
 
-                renderer.SetPropertyBlock(block);
-            }
-        }
+        //        block.SetVector(HolePosition, hit.point);
+        //        block.SetFloat(HoleRadius, holeRadius);
+
+        //        renderer.SetPropertyBlock(block);
+        //    }
+        //}
     }
 }
 

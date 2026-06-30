@@ -363,7 +363,7 @@ MonoBehaviour:
   playerCamera: {fileID: 330585545}
   sphereRadius: 0.3
   maxDistance: 5
-  holeRadius: 2
+  holeRadius: 0.5
   wallMask:
     serializedVersion: 2
     m_Bits: 64
