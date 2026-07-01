@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 
@@ -11,18 +12,21 @@ namespace Scripts.Camera
 
         [Header("Objects")]
         [SerializeField] private Transform homeTransform;
+        [SerializeField] private UnityEngine.Camera camera;
 
-        [Header("CameraOption")]
+        [Header("CameraOptions")]
         [SerializeField] private float cameraSpeed;
+        [SerializeField] private LayerMask terrainMask;
 
-        [Header("ShaderOption")]
+        [Header("ShaderOptions")]
         [SerializeField] private float sphereRadius = 0.3f;
         [SerializeField] private float maxDistance = 5f;
         [SerializeField] private float holeRadius = 0.5f;
         [SerializeField] private float fadeSpeed = 3f;
         [SerializeField] private LayerMask wallMask;
 
-
+        public event Action<Vector3> OnTerrainCliked;
+        public event Action OnLeftButtonCliked;
 
         private CameraInput _cameraInput;
         private Renderer _lastRenderer;
@@ -36,8 +40,26 @@ namespace Scripts.Camera
 
         private void Update()
         {
+            RaycastHit raycastHit;
+            Ray ray = camera.ScreenPointToRay(_cameraInput.MousePositionVector);
+
+            if (Physics.Raycast(ray, out raycastHit, Mathf.Infinity, terrainMask))
+            {
+                OnTerrainCliked?.Invoke(raycastHit.point);
+            }
+
+
+            SetCell();
             HoleRender();
             Movment();
+        }
+
+        private void SetCell()
+        {
+            if (_cameraInput.IsMouseLeftButtonPressed)
+            {
+                OnLeftButtonCliked?.Invoke();
+            }       
         }
 
         private void HoleRender()
@@ -119,13 +141,13 @@ namespace Scripts.Camera
             Vector3 start = transform.position;
             Vector3 end = start + transform.forward * maxDistance;
 
-            
+
             Gizmos.DrawWireSphere(start, sphereRadius);
 
-           
+
             Gizmos.DrawWireSphere(end, sphereRadius);
 
-            
+
             Gizmos.DrawLine(start, end);
         }
     }
