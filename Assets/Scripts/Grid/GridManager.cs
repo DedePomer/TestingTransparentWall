@@ -1,11 +1,12 @@
+using NUnit.Framework;
 using Scripts.Camera;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GridManager : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private Terrain terrain;
-    [SerializeField] private GameObject roomPreviewPrefab;
     [SerializeField] private CameraConroller mainCamera;
 
     [Header("GridOptions")]
@@ -18,6 +19,7 @@ public class GridManager : MonoBehaviour
 
 
     private CellObject[,] _cells;
+    private List<Building> _buildings = new List<Building>();
 
     private int _terrainWidth;
     private int _terrainHeight;
@@ -25,28 +27,22 @@ public class GridManager : MonoBehaviour
 
     private Vector3 _terrainPosition;
 
-    private GameObject _plug;
+    private GameObject _roomPreview;
 
     private void OnEnable()
     {
-        mainCamera.OnTerrainCliked += HandleTerrainHovered;
+        mainCamera.OnRoomHovered += HandleRoomHovered;
         mainCamera.OnLeftButtonCliked += HandleSetRoomClicked;
     }
 
     private void OnDisable()
     {
-        mainCamera.OnTerrainCliked -= HandleTerrainHovered;
+        mainCamera.OnRoomHovered -= HandleRoomHovered;
         mainCamera.OnLeftButtonCliked -= HandleSetRoomClicked;
     }
 
     private void Awake()
     {
-        _plug = Instantiate(
-            roomPreviewPrefab,
-            new Vector3(0, 0, 0),
-            Quaternion.identity);
-        _plug.SetActive(false);
-
 
         Vector3 terrainSize = terrain.terrainData.size;
         _terrainPosition = terrain.transform.position;
@@ -58,19 +54,68 @@ public class GridManager : MonoBehaviour
         BuildGrid();
     }
 
-    private void HandleSetRoomClicked()
-    { 
-        
+    private void HandleSetRoomClicked(Vector3 pointPosition, RoomData room)
+    {
+        Debug.Log("HandleSetRoomClicked START");
+
+        CellObject cell = GetCellAt(pointPosition);
+
+        List<CellObject> cells = GetCellsForRoom(cell, room);
+
+        Vector3 locationRoomVector = new Vector3(cell.Center.x, cell.Center.y, cell.Center.z);
+
+        if (_roomPreview != null)
+        {
+            Destroy(_roomPreview);
+            _roomPreview = null;
+        }
+
+        GameObject instance = Instantiate(room.RoomPrefab, locationRoomVector, Quaternion.identity);
+        Building building = new Building(room, cells, instance);
+
+        foreach (var c in cells)
+            c.SetBuilding(building);
+
+        _buildings.Add(building);
+
+        Debug.Log("HandleSetRoomClicked END");
     }
 
 
-    private void HandleTerrainHovered(Vector3 pointPosition)
+    private void HandleRoomHovered(Vector3 pointPosition, RoomData room)
     {
         CellObject cell = GetCellAt(pointPosition);
 
-        _plug.SetActive(true);
-        _plug.transform.position =
-            new Vector3(cell.Center.x, cell.Center.y, cell.Center.z);
+        Vector3 locationPreviewVector = new Vector3(cell.Center.x, cell.Center.y, cell.Center.z);
+
+        if (_roomPreview == null)
+            _roomPreview = Instantiate(room.PreviewPrefab, locationPreviewVector, Quaternion.identity);
+
+
+        _roomPreview.transform.position = locationPreviewVector;
+    }
+
+    private List<CellObject> GetCellsForRoom(CellObject cell, RoomData room)
+    {
+        List<CellObject> occupiedCells = new List<CellObject>();
+      
+        for (int x = cell.XIndex; x < cell.XIndex + room.SizeX; x++)
+        {
+            for (int z = cell.ZIndex; z < cell.ZIndex + room.SizeZ; z++)
+            {
+                if (x >= _cells.GetLength(0) || z >= _cells.GetLength(1))
+                    return null;
+
+                if (!_cells[x, z].IsOccupied)
+                {
+                    occupiedCells.Add(cell);
+                }
+                else
+                    return null;
+            }
+        }
+
+        return occupiedCells;
     }
 
     private CellObject GetCellAt(Vector3 pointPosition)
@@ -104,7 +149,7 @@ public class GridManager : MonoBehaviour
                     z = (min.z + max.z) * 0.5f
                 };
 
-                _cells[x, z] = new CellObject(cellSize, cellSize, _terrainHeight, center);
+                _cells[x, z] = new CellObject(_terrainHeight, center, x, z);
             }
         }
     }
@@ -122,5 +167,4 @@ public class GridManager : MonoBehaviour
             Gizmos.DrawWireCube(center, size);
         }
     }
-
 }
