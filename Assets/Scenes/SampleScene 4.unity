@@ -4162,7 +4162,7 @@ MonoBehaviour:
   Room1x2Button: {fileID: 226933442}
   Rooms:
   - {fileID: 11400000, guid: e4c4ad9125e63ac44a58d124d558f943, type: 2}
-  - {fileID: 11400000, guid: 7f92be911d86a604d8f0840becaf5a44, type: 2}
+  - {fileID: 11400000, guid: 4ff549f4abd172948820f076a3a7cee3, type: 2}
 --- !u!1 &1069929223
 GameObject:
   m_ObjectHideFlags: 0
