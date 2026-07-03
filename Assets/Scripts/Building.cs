@@ -7,12 +7,9 @@ public class Building
 
     public List<CellObject> OccupiedCells { get; private set; }
 
-    public GameObject Instance { get; private set; }
-
-    public Building(RoomData roomData, List<CellObject> occupiedCells, GameObject instance) 
+    public Building(RoomData roomData, List<CellObject> occupiedCells) 
     {
         RoomData = roomData;
         OccupiedCells = occupiedCells;
-        Instance = instance;
     }
 }

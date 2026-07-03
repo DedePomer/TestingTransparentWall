@@ -11,13 +11,10 @@ namespace Scripts.Camera
         private static readonly int HoleRadius = Shader.PropertyToID("_HoleRadius");
 
         [Header("Objects")]
-        [SerializeField] private Transform homeTransform;
-        [SerializeField] private UnityEngine.Camera camera;
-        [SerializeField] private RoomData room;
+        [SerializeField] private UnityEngine.Camera camera; 
 
         [Header("CameraOptions")]
         [SerializeField] private float cameraSpeed;
-        [SerializeField] private LayerMask terrainMask;
 
         [Header("ShaderOptions")]
         [SerializeField] private float sphereRadius = 0.3f;
@@ -26,23 +23,13 @@ namespace Scripts.Camera
         [SerializeField] private float fadeSpeed = 3f;
         [SerializeField] private LayerMask wallMask;
 
-        public event Action<Vector3, RoomData> OnRoomHovered;
-        public event Action<Vector3, RoomData> OnLeftButtonCliked;
 
         private CameraInput _cameraInput;
         private Renderer _lastRenderer;
         private float _currentRadius = 0f;
         private bool _isNear = false;
 
-        private void OnEnable()
-        {
-            _cameraInput.MouseLeftButtonClicked += OnMouseLeftButtonClicked;
-        }
 
-        private void OnDisable()
-        {
-            _cameraInput.MouseLeftButtonClicked -= OnMouseLeftButtonClicked;
-        }
 
         private void Awake()
         {
@@ -51,34 +38,11 @@ namespace Scripts.Camera
 
         private void Update()
         {
-            RaycastHit raycastHit;
-            Ray ray = camera.ScreenPointToRay(_cameraInput.MousePositionVector);
-
-            if (Physics.Raycast(ray, out raycastHit, Mathf.Infinity, terrainMask))
-            {
-                OnRoomHovered?.Invoke(raycastHit.point, room);
-            }
-
-
             HoleRender();
             Movment();
         }
 
-        private void OnMouseLeftButtonClicked()
-        {
-            RaycastHit raycastHit;
-            TryGetTerrainHit(out raycastHit);
-            Debug.Log("Клилнул");
-
-            OnLeftButtonCliked?.Invoke(raycastHit.point, room);
-        }
-
-        private bool TryGetTerrainHit(out RaycastHit hit)
-        {
-            Ray ray = camera.ScreenPointToRay(_cameraInput.MousePositionVector);
-            return Physics.Raycast(ray, out hit, Mathf.Infinity, terrainMask);
-        }
-
+      
         private void HoleRender()
         {
             RaycastHit hit;
