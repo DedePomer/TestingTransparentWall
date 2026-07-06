@@ -10,11 +10,13 @@ public class CellObject
     //public Vector3 min { get; private set; }
     //public Vector3 max { get; private set; }
 
-    public bool IsOccupied => Building != null;
+    public bool IsOccupied { get; private set; }
     public bool IsBlock { get; private set; }
 
     public CellObject(int height, Vector3 center, int x, int z, bool isBlock)
     {
+        IsOccupied = false;
+
         Height = height;
         Center = center;
         XIndex = x;
@@ -26,11 +28,13 @@ public class CellObject
     {
         Building = building;
     }
-
     public void ClearBuilding()
     {
         Building = null;
     }
-
+    public void SetOccupied(bool isOccupied)
+    { 
+        IsOccupied = isOccupied;
+    }
 }
 

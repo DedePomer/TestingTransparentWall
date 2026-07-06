@@ -98,6 +98,8 @@ public class GridController : MonoBehaviour
         {
             _rotation = (_rotation + 90) % 360;
             _roomPreview.transform.rotation = Quaternion.Euler(0, _rotation, 0);
+
+            Debug.Log($"{_roomPreview.transform.position}");
         }
     }
 
@@ -107,14 +109,14 @@ public class GridController : MonoBehaviour
 
     private void SetRoomOnGrid(Vector3 pointPosition)
     {
-        CellObject cell = GetCellAt(pointPosition);
-        if (cell == null)
+        CellObject selectedCell = GetCellAt(pointPosition);
+        if (selectedCell == null)
         {
             return;
         }
 
-        List<CellObject> cells = GetCellsForRoom(cell, _roomData);
-        if (cells == null)
+        List<CellObject> cells = GetCellsForRoom(selectedCell, _roomData);
+        if (cells == null || CellIsOccupy(cells))
         {
             return;
         }
@@ -143,12 +145,17 @@ public class GridController : MonoBehaviour
         GameObject instance = Instantiate(_roomData.RoomPrefab, center, Quaternion.Euler(0, _rotation, 0));
         Building building = new Building(_roomData, cells);
 
-        foreach (var c in cells)
-            c.SetBuilding(building);
+        foreach (var cell in cells)
+        {
+            cell.SetBuilding(building);
+            cell.SetOccupied(true);
+        }
+
 
         _rotation = 0;
         _roomData = null;
         _cellIsOccupied = true;
+    
     }
 
     private void RoomPreview(Vector3 pointPosition)
@@ -163,7 +170,7 @@ public class GridController : MonoBehaviour
         List<CellObject> cells = GetCellsForRoom(cell, _roomData);
         if (cells == null)
         {
-            return;
+             return;
         }
 
         Vector3 center = cells != null ? GetCellsCenter(cells) : cell.Center;
@@ -175,12 +182,12 @@ public class GridController : MonoBehaviour
         _roomPreview.transform.position = center;
         _roomPreview.transform.rotation = Quaternion.Euler(0, _rotation, 0);
 
-        string s = "";
-        foreach (var c in cells)
-        { 
-            s += $"{c.XIndex} {c.ZIndex}";
-        }
-        Debug.Log(s);
+        //string s = "";
+        //foreach (var c in cells)
+        //{
+        //    s += $"{c.XIndex} {c.ZIndex}";
+        //}
+        //Debug.Log(s);
     }
 
 
@@ -202,17 +209,7 @@ public class GridController : MonoBehaviour
                     return null;
                 }
 
-                if (!_cells[x, z].IsOccupied)
-                {
-                    occupiedCells.Add(_cells[x, z]);
-                }
-                else
-                {
-                    Debug.Log("Клетка занята");
-                    return null;
-                }
-
-                
+                occupiedCells.Add(_cells[x, z]);      
             }
         }
 
@@ -239,11 +236,14 @@ public class GridController : MonoBehaviour
     private Vector3 GetCellsCenter(List<CellObject> cells)
     {
          Vector3 centerVector = Vector3.zero;
-        foreach (var c in cells)
-            centerVector += c.Center;
+        foreach (var cell in cells)
+        {
+            centerVector += cell.Center;
+        }    
+            
 
         centerVector = centerVector / cells.Count;
-        //Debug.Log($"Центральный вектор {centerVector}");
+        Debug.Log($"Центральный вектор {centerVector}");
         return centerVector;
 
     }
@@ -285,6 +285,18 @@ public class GridController : MonoBehaviour
         {
             if (cell.IsBlock)
             {
+                return true;
+            }
+        }
+        return false;
+    }
+    private bool CellIsOccupy(List<CellObject> cells)
+    {
+        foreach (var cell in cells)
+        {
+            if (cell.IsOccupied)
+            {
+                Debug.Log($"Ячейки заняты {cell.XIndex} {cell.ZIndex}");
                 return true;
             }
         }

@@ -230,9 +230,9 @@ MonoBehaviour:
   mainCamera: {fileID: 330585545}
   gridView: {fileID: 981671558}
   gridXSize: 10
-  gridZSize: 10
+  gridZSize: 16
   cellSize: 10
-  marginSize: 2
+  marginSize: 1
   terrainMask:
     serializedVersion: 2
     m_Bits: 128
@@ -1161,7 +1161,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 1159757127}
-  m_VersionIndex: 710
+  m_VersionIndex: 746
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -1647,13 +1647,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.09606734, y: -0.3405282, z: 0.04157188, w: 0.93438935}
-  m_LocalPosition: {x: -2.24, y: 49.9, z: 1.24}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -46.6, y: 137.8, z: 79.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 11.996, y: -39.972, z: 0.718}
+  m_LocalEulerAnglesHint: {x: 90, y: 6, z: 6}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4166,7 +4166,7 @@ MonoBehaviour:
   Room1x2Button: {fileID: 226933442}
   Rooms:
   - {fileID: 11400000, guid: e4c4ad9125e63ac44a58d124d558f943, type: 2}
-  - {fileID: 11400000, guid: fe38e2266f1f385479cd006f8d8eb2e9, type: 2}
+  - {fileID: 11400000, guid: 06e47995c5826674180c2d1c6ab1bd68, type: 2}
 --- !u!1 &1069929223
 GameObject:
   m_ObjectHideFlags: 0
@@ -5832,7 +5832,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 1176729716}
-  m_VersionIndex: 710
+  m_VersionIndex: 746
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -6425,7 +6425,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1678855552
 Transform:
   m_ObjectHideFlags: 0
@@ -6756,7 +6756,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 1640229026}
-  m_VersionIndex: 876
+  m_VersionIndex: 912
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -8027,7 +8027,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2005136889
 Transform:
   m_ObjectHideFlags: 0
@@ -8064,7 +8064,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 1735346602}
 --- !u!33 &2005136891
 MeshFilter:
   m_ObjectHideFlags: 10
@@ -8358,7 +8358,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 1735346602}
-  m_VersionIndex: 1561
+  m_VersionIndex: 1585
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
