@@ -1,9 +1,5 @@
-using NUnit.Framework;
-using Scripts.Camera;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 
 [DisallowMultipleComponent, RequireComponent(typeof(GridInput))]
@@ -16,12 +12,16 @@ public class GridController : MonoBehaviour
 
 
     [Header("GridOptions")]
+    [SerializeField] private int gridXSize;
+    [SerializeField] private int gridZSize;
     [SerializeField] private int cellSize;
+    [SerializeField] private int marginSize;
     [SerializeField] private LayerMask terrainMask;
 
     [Header("Debug")]
     [SerializeField] private bool drawGizmos = true;
-    [SerializeField] private Color gizmoColor = new Color(0f, 1f, 0f, 0.5f);
+    [SerializeField] private Color defaultCellColor;
+    [SerializeField] private Color marginCellColor;
 
     private GridInput _gridInput;
 
@@ -97,7 +97,7 @@ public class GridController : MonoBehaviour
         if (_roomPreview != null)
         {
             _rotation = (_rotation + 90) % 360;
-            _roomPreview.transform.rotation = Quaternion.Euler(0, _rotation, 0); 
+            _roomPreview.transform.rotation = Quaternion.Euler(0, _rotation, 0);
         }
     }
 
@@ -108,11 +108,19 @@ public class GridController : MonoBehaviour
     private void SetRoomOnGrid(Vector3 pointPosition)
     {
         CellObject cell = GetCellAt(pointPosition);
+        if (cell == null)
+        {
+            return;
+        }
 
         List<CellObject> cells = GetCellsForRoom(cell, _roomData);
         if (cells == null)
         {
-            Debug.Log("Занято");
+            return;
+        }
+
+        if (IsMargin(cells))
+        {
             return;
         }
 
@@ -124,15 +132,15 @@ public class GridController : MonoBehaviour
             _roomPreview = null;
         }
 
-        if (_cellIsOccupied) 
+        if (_cellIsOccupied)
         {
-            if (!IsNeighbourExist(cells)) 
+            if (!IsNeighbourExist(cells))
             {
                 return;
             }
         }
 
-        GameObject instance = Instantiate(_roomData.RoomPrefab, center, Quaternion.Euler(0,_rotation,0));
+        GameObject instance = Instantiate(_roomData.RoomPrefab, center, Quaternion.Euler(0, _rotation, 0));
         Building building = new Building(_roomData, cells);
 
         foreach (var c in cells)
@@ -147,14 +155,16 @@ public class GridController : MonoBehaviour
     {
 
         CellObject cell = GetCellAt(pointPosition);
-
-        if (cell.IsOccupied)
+        if (cell == null || cell.IsOccupied)
         {
-            Debug.Log("Занято");
             return;
         }
 
         List<CellObject> cells = GetCellsForRoom(cell, _roomData);
+        if (cells == null)
+        {
+            return;
+        }
 
         Vector3 center = cells != null ? GetCellsCenter(cells) : cell.Center;
 
@@ -164,6 +174,13 @@ public class GridController : MonoBehaviour
 
         _roomPreview.transform.position = center;
         _roomPreview.transform.rotation = Quaternion.Euler(0, _rotation, 0);
+
+        string s = "";
+        foreach (var c in cells)
+        { 
+            s += $"{c.XIndex} {c.ZIndex}";
+        }
+        Debug.Log(s);
     }
 
 
@@ -181,9 +198,9 @@ public class GridController : MonoBehaviour
             {
                 if (x >= _cells.GetLength(0) || z >= _cells.GetLength(1))
                 {
+                    Debug.Log("Значение вне грида");
                     return null;
                 }
-                    
 
                 if (!_cells[x, z].IsOccupied)
                 {
@@ -191,9 +208,11 @@ public class GridController : MonoBehaviour
                 }
                 else
                 {
+                    Debug.Log("Клетка занята");
                     return null;
-                }    
-                    
+                }
+
+                
             }
         }
 
@@ -205,6 +224,11 @@ public class GridController : MonoBehaviour
         int x = Mathf.FloorToInt(local.x / cellSize);
         int z = Mathf.FloorToInt(local.z / cellSize);
 
+        if (x >= _cells.GetLength(0) || z >= _cells.GetLength(1))
+        {
+            return null;
+        }
+
         return _cells[x, z];
     }
     private bool TryGetTerrainHit(out RaycastHit hit)
@@ -214,10 +238,12 @@ public class GridController : MonoBehaviour
     }
     private Vector3 GetCellsCenter(List<CellObject> cells)
     {
-        Vector3 center = Vector3.zero;
-        foreach (var c in cells) center += c.Center;
+         Vector3 centerVector = Vector3.zero;
+        foreach (var c in cells)
+            centerVector += c.Center;
 
-        Vector3 centerVector = center / cells.Count;
+        centerVector = centerVector / cells.Count;
+        //Debug.Log($"Центральный вектор {centerVector}");
         return centerVector;
 
     }
@@ -226,12 +252,12 @@ public class GridController : MonoBehaviour
     {
         int[,] directions =
         {
-            { 1, 0 },   
-            { -1, 0 },  
-            { 0, 1 },   
-            { 0, -1 }   
+            { 1, 0 },
+            { -1, 0 },
+            { 0, 1 },
+            { 0, -1 }
         };
-        foreach(var cell in cells)
+        foreach (var cell in cells)
         {
             for (int i = 0; i < directions.GetLength(0); i++)
             {
@@ -249,16 +275,27 @@ public class GridController : MonoBehaviour
 
             }
         }
-        
+
         Debug.Log("Нет соседа");
+        return false;
+    }
+    private bool IsMargin(List<CellObject> cells)
+    {
+        foreach (var cell in cells)
+        {
+            if (cell.IsBlock)
+            {
+                return true;
+            }
+        }
         return false;
     }
 
 
     private void BuildGrid()
     {
-        int countXCell = _terrainWidth / cellSize;
-        int countZCell = _terrainLength / cellSize;
+        int countXCell = gridXSize + marginSize * 2;
+        int countZCell = gridZSize + marginSize * 2;
 
         _cells = new CellObject[countXCell, countZCell];
 
@@ -277,7 +314,11 @@ public class GridController : MonoBehaviour
                     z = (min.z + max.z) * 0.5f
                 };
 
-                _cells[x, z] = new CellObject(_terrainHeight, center, x, z);
+                bool isMargin = x < marginSize || x >= gridXSize + marginSize ||
+                                z < marginSize || z >= gridZSize + marginSize;
+
+
+                _cells[x, z] = new CellObject(_terrainHeight, center, x, z, isMargin);
             }
         }
     }
@@ -286,10 +327,14 @@ public class GridController : MonoBehaviour
     {
         if (!drawGizmos || _cells == null) return;
 
-        Gizmos.color = gizmoColor;
         foreach (var cell in _cells)
         {
+            Gizmos.color = defaultCellColor;
             if (cell == null) continue;
+            if (cell.IsBlock)
+            {
+                Gizmos.color = marginCellColor;
+            }
             Vector3 center = new Vector3(cell.Center.x, _terrainPosition.y, cell.Center.z);
             Vector3 size = new Vector3(cellSize, 1f, cellSize);
             Gizmos.DrawWireCube(center, size);
