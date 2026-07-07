@@ -20,7 +20,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &213515668057205469
 Transform:
   m_ObjectHideFlags: 0
@@ -1479,7 +1479,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2911361370975944220
 Transform:
   m_ObjectHideFlags: 0
@@ -3365,30 +3365,30 @@ MonoBehaviour:
   - {x: 0, y: 0, z: -1, w: -1}
   - {x: 0, y: 0, z: -1, w: -1}
   - {x: 0, y: 0, z: -1, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
+  - {x: 0.9999999, y: 0.0004923165, z: 0, w: -1}
+  - {x: 0.9999999, y: 0.0004917205, z: 0, w: -1}
+  - {x: 0.9999999, y: 0.0004917205, z: 0, w: -1}
+  - {x: 0.9999999, y: 0.00049112446, z: 0, w: -1}
   - {x: -0.00000019073487, y: 0, z: -1, w: -1}
   - {x: -0.00000019073487, y: 0, z: -1, w: -1}
   - {x: -0.00000019073487, y: 0, z: -1, w: -1}
   - {x: -0.00000019073487, y: 0, z: -1, w: -1}
-  - {x: -1, y: 0, z: 0, w: -1}
-  - {x: -1, y: 0, z: 0, w: -1}
-  - {x: -1, y: 0, z: 0, w: -1}
-  - {x: -1, y: 0, z: 0, w: -1}
+  - {x: -0.9999999, y: 0.0004923165, z: 0, w: -1}
+  - {x: -0.9999999, y: 0.0004917205, z: 0, w: -1}
+  - {x: -0.9999999, y: 0.0004917205, z: 0, w: -1}
+  - {x: -0.9999999, y: 0.00049112446, z: 0, w: -1}
   - {x: 0.00000019073487, y: 0, z: 1, w: -1}
   - {x: 0.00000019073487, y: 0, z: 1, w: -1}
   - {x: 0.00000019073487, y: 0, z: 1, w: -1}
   - {x: 0.00000019073487, y: 0, z: 1, w: -1}
-  - {x: -1, y: 0, z: 0, w: -1}
-  - {x: -1, y: 0, z: 0, w: -1}
-  - {x: -1, y: 0, z: 0, w: -1}
-  - {x: -1, y: 0, z: 0, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
-  - {x: 1, y: 0, z: 0, w: -1}
+  - {x: -0.9999999, y: 0, z: 0.0005006723, w: -1}
+  - {x: -0.9999999, y: 0, z: 0.0005006723, w: -1}
+  - {x: -0.9999999, y: 0, z: 0.0005006723, w: -1}
+  - {x: -0.9999999, y: 0, z: 0.0005006723, w: -1}
+  - {x: 0.9999999, y: 0, z: 0.0005006723, w: -1}
+  - {x: 0.9999999, y: 0, z: 0.0005006723, w: -1}
+  - {x: 0.9999999, y: 0, z: 0.0005006723, w: -1}
+  - {x: 0.9999999, y: 0, z: 0.0005006723, w: -1}
   - {x: 0, y: 0, z: -1, w: -1}
   - {x: 0, y: 0, z: -1, w: -1}
   - {x: 0, y: 0, z: -1, w: -1}
@@ -3611,6 +3611,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7886979904366229424}
+  - component: {fileID: 6018113230063758922}
   m_Layer: 0
   m_Name: TestRoomWithWalls_20
   m_TagString: Untagged
@@ -3637,6 +3638,30 @@ Transform:
   - {fileID: 6326872561454464939}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6018113230063758922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8510564525585476010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 498cd43db311bb849891562dc67e7fb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Room
+  doors:
+  - Side: 1
+    Plug: {fileID: 7075207765910397979}
+    Index: 1
+  - Side: 2
+    Plug: {fileID: 2107671125580584348}
+    Index: 2
+  - Side: 8
+    Plug: {fileID: 8624472495083148590}
+    Index: 2
+  sizeX: 1
+  sizeZ: 2
 --- !u!1 &8624472495083148590
 GameObject:
   m_ObjectHideFlags: 0
@@ -3657,7 +3682,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4008680728883549971
 Transform:
   m_ObjectHideFlags: 0

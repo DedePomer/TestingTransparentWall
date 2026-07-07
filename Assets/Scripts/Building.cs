@@ -12,4 +12,10 @@ public class Building
         RoomData = roomData;
         OccupiedCells = occupiedCells;
     }
+
+    public Dictionary<CellObject, Vector2> GetLocal—oordinates()
+    { 
+        
+    
+    }
 }

@@ -22,6 +22,7 @@ public class CellObject
         XIndex = x;
         ZIndex = z;
         IsBlock = isBlock;
+
     }
 
     public void SetBuilding(Building building)

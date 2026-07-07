@@ -142,7 +142,7 @@ public class GridController : MonoBehaviour
             }
         }
 
-        GameObject instance = Instantiate(_roomData.RoomPrefab, center, Quaternion.Euler(0, _rotation, 0));
+        GameObject instance = Instantiate(_roomData.Room.gameObject, center, Quaternion.Euler(0, _rotation, 0));
         Building building = new Building(_roomData, cells);
 
         foreach (var cell in cells)
@@ -192,12 +192,12 @@ public class GridController : MonoBehaviour
 
 
 
-    private List<CellObject> GetCellsForRoom(CellObject cell, RoomData room)
+    private List<CellObject> GetCellsForRoom(CellObject cell, RoomData roomData)
     {
         List<CellObject> occupiedCells = new List<CellObject>();
 
-        int sizeX = (_rotation == 0 || _rotation == 180) ? room.SizeX : room.SizeZ;
-        int sizeZ = (_rotation == 0 || _rotation == 180) ? room.SizeZ : room.SizeX;
+        int sizeX = (_rotation == 0 || _rotation == 180) ? roomData.Room.SizeX : roomData.Room.SizeZ;
+        int sizeZ = (_rotation == 0 || _rotation == 180) ? roomData.Room.SizeZ : roomData.Room.SizeX;
 
         for (int x = cell.XIndex; x < cell.XIndex + sizeX; x++)
         {
