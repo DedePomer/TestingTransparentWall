@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public static class DoorSideUtils
 {
@@ -24,14 +24,16 @@ public static class DoorSideUtils
         return _sides[(index + steps) % 4];
     }
 
-    public static DoorSideEnum GetDorSideInCell(CellObject cell, DoorData[] doordatas)
-    { 
-        
+    public static DoorSideEnum GetOppositeSide(DoorSideEnum side)
+    {
+        return side switch
+        {
+            DoorSideEnum.North => DoorSideEnum.South,
+            DoorSideEnum.South => DoorSideEnum.North,
+            DoorSideEnum.East => DoorSideEnum.West,
+            DoorSideEnum.West => DoorSideEnum.East,
+            _ => side
+        };
     }
-
-    //public static bool CanConnectWalls(DoorData[] firstRoomDoors, DoorData[] secondRoomDoors)
-    //{ 
-        
-    //}
 }
 

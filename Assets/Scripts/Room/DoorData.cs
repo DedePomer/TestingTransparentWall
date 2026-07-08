@@ -5,5 +5,8 @@ public class DoorData
 {
     public DoorSideEnum Side;
     public GameObject Plug;
-    public int Index;
+    /// <summary>
+    /// »ндекс идЄт от 0 и т.д. под возростающей. —читаетс€ справо налево и снизу вверх 
+    /// </summary>
+    public int Index; 
 }

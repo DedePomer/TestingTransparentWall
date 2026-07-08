@@ -230,9 +230,9 @@ MonoBehaviour:
   mainCamera: {fileID: 330585545}
   gridView: {fileID: 981671558}
   gridXSize: 10
-  gridZSize: 16
+  gridZSize: 10
   cellSize: 10
-  marginSize: 1
+  marginSize: 3
   terrainMask:
     serializedVersion: 2
     m_Bits: 128

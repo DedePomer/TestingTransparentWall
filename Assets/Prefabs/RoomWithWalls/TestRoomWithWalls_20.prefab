@@ -3653,13 +3653,13 @@ MonoBehaviour:
   doors:
   - Side: 1
     Plug: {fileID: 7075207765910397979}
-    Index: 1
+    Index: 0
   - Side: 2
     Plug: {fileID: 2107671125580584348}
-    Index: 2
+    Index: 1
   - Side: 8
     Plug: {fileID: 8624472495083148590}
-    Index: 2
+    Index: 1
   sizeX: 1
   sizeZ: 2
 --- !u!1 &8624472495083148590

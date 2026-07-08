@@ -1155,16 +1155,16 @@ MonoBehaviour:
   doors:
   - Side: 1
     Plug: {fileID: 292713624452304703}
-    Index: 2
+    Index: 1
   - Side: 1
     Plug: {fileID: 8562383630253133258}
-    Index: 1
+    Index: 0
   - Side: 2
     Plug: {fileID: 7031729258311613771}
-    Index: 2
+    Index: 1
   - Side: 2
     Plug: {fileID: 9184222488410300813}
-    Index: 1
+    Index: 0
   sizeX: 2
   sizeZ: 2
 --- !u!1 &7031729258311613771

@@ -1465,7 +1465,7 @@ MonoBehaviour:
   doors:
   - Side: 1
     Plug: {fileID: 8907943328398272042}
-    Index: 1
+    Index: 0
   sizeX: 1
   sizeZ: 1
 --- !u!1 &7021698111043919811
