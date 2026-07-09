@@ -3651,15 +3651,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Room
   doors:
-  - Side: 1
+  - LocalPosition: {x: 0, y: 1}
     Plug: {fileID: 7075207765910397979}
-    Index: 0
-  - Side: 2
+    Side: 1
+  - LocalPosition: {x: 0, y: 1}
     Plug: {fileID: 2107671125580584348}
-    Index: 1
-  - Side: 8
+    Side: 2
+  - LocalPosition: {x: 0, y: 1}
     Plug: {fileID: 8624472495083148590}
-    Index: 1
+    Side: 8
   sizeX: 1
   sizeZ: 2
 --- !u!1 &8624472495083148590
