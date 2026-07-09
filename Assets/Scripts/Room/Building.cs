@@ -2,12 +2,12 @@ using System.Collections.Generic;
 
 public class Building
 {
-    public RoomData RoomData { get; }
+    public RoomPlacement RoomPlacement { get; }
     public List<CellObject> OccupiedCells { get; }
 
-    public Building(RoomData roomData, List<CellObject> occupiedCells)
+    public Building(RoomPlacement roomPlacement, List<CellObject> occupiedCells)
     {
-        RoomData = roomData;
+        RoomPlacement = roomPlacement;
         OccupiedCells = occupiedCells;
     }
 }

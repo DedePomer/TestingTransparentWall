@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -11,6 +12,7 @@ public class PlacementValidator
         _cells = cells;
     }
 
+
     public bool CanPlace(RoomPlacement placement)
     {
         if (placement == null)
@@ -18,10 +20,11 @@ public class PlacementValidator
             return false;
         }
 
-
-        foreach (Vector2Int position in placement.GetOccupiedCells())
+        foreach (Vector2Int ocuupiedCells in placement.GetOccupiedCells())
         {
-            CellObject cell = GetCell(position);
+            CellObject cell = GetCell(ocuupiedCells);
+
+            
 
             if (cell == null)
             {
@@ -41,15 +44,21 @@ public class PlacementValidator
     {
         if (position.x < 0 ||
             position.y < 0 ||
-            position.x >= _cells.GetLength(0) ||
-            position.y >= _cells.GetLength(1))
+            position.x > _cells.GetLength(0) - 1 ||
+            position.y > _cells.GetLength(1) - 1)
         {
-            return null;
+            return null;           
         }
+        
 
         return _cells[position.x, position.y];
     }
 
+
+
+
 }
+
+
 
 

@@ -27,7 +27,6 @@ namespace Scripts.Camera
         private CameraInput _cameraInput;
         private Renderer _lastRenderer;
         private float _currentRadius = 0f;
-        private bool _isNear = false;
 
 
 
