@@ -40,16 +40,16 @@ public class GridController : MonoBehaviour
 
     private void OnEnable()
     {
-        gridView.OnRoomSelected += OnRoomSelected;
-        _gridInput.OnMouseLeftButtonClicked += OnSetRoom;
-        _gridInput.OnSpaceButtonClicked += OnRotateRoom;
+        gridView.OnRoomSelected += HandleRoomSelected;
+        _gridInput.OnMouseLeftButtonClicked += HandleSetRoom;
+        _gridInput.OnSpaceButtonClicked += HandleRotateRoom;
     }
 
     private void OnDisable()
     {
-        gridView.OnRoomSelected -= OnRoomSelected;
-        _gridInput.OnMouseLeftButtonClicked -= OnSetRoom;
-        _gridInput.OnSpaceButtonClicked -= OnRotateRoom;
+        gridView.OnRoomSelected -= HandleRoomSelected;
+        _gridInput.OnMouseLeftButtonClicked -= HandleSetRoom;
+        _gridInput.OnSpaceButtonClicked -= HandleRotateRoom;
     }
 
     private void Awake()
@@ -78,26 +78,26 @@ public class GridController : MonoBehaviour
         }
     }
 
-    private void OnRoomSelected(RoomData roomData)
+    private void HandleRoomSelected(RoomData roomData)
     {
         _currentPlacement = new RoomPlacement(roomData);
     }
 
-    private void OnSetRoom()
+    private void HandleSetRoom()
     {
         RaycastHit raycastHit;
         if (TryGetTerrainHit(out raycastHit) && _placementPreview != null)
             SetRoomOnGrid(raycastHit.point);
     }
 
-    private void OnRotateRoom()
+    private void HandleRotateRoom()
     {
         if (_currentPlacement == null)
             return;
 
         _currentPlacement.RotateRoom();
 
-        //UpdatePreview();
+        UpdatePreview();
     }
 
 
@@ -155,17 +155,30 @@ public class GridController : MonoBehaviour
         {
             return;
         }
-
-        var cells = _currentPlacement.GetOccupiedCells();
-        if (cells.Count == 0 && _placementValidator.CanPlace(_currentPlacement))
+        
+        List<Vector2Int> cellsCord = _currentPlacement.GetOccupiedCells();
+        if (cellsCord.Count == 0 || !_placementValidator.CanPlace(_currentPlacement))
         {
             return;
         }
+        List<CellObject> cells = GetCells(cellsCord);
 
         Vector3? center = GetCellsCenter(cells);
         if (center == null)
         {
             return;
+        }
+
+
+
+
+        if (_cellIsOccupied)
+        {
+
+            if (!_placementValidator.HasDoorConnection(_currentPlacement)) 
+            { 
+                return ;
+            }
         }
 
         if (_placementPreview != null)
@@ -175,50 +188,18 @@ public class GridController : MonoBehaviour
         }
 
 
+        Quaternion rotation = Quaternion.Euler(0, (int)_currentPlacement.Rotation, 0);
+        GameObject roomObject = Instantiate(_currentPlacement.RoomData.PreviewPrefab, center.Value, rotation);
+        Building building = new Building(_currentPlacement, cells, roomObject);
+        
 
-        if (_cellIsOccupied)
+        foreach (var cell in cells)
         {
-            //var neighbours = GetNeighbourCells(occopyCells);
-
-            //if (neighbours.Count == 0)
-            //{
-            //    Debug.Log("Нет соседей — комнату ставить нельзя");
-            //    return;
-            //}
-
-            //bool hasAnyValidConnection = false;
-
-            //foreach (var (callingLocal, neighbourCell, side) in neighbours)
-            //{
-            //    DoorSideEnum oppositeSide = DoorSideUtils.GetOppositeSide(side);
-
-            //    bool newRoomHasDoor = RoomHasDoor(callingLocal, side);
-            //    bool neighbourHasDoor = NeighbourHasDoor(neighbourCell, oppositeSide);
-
-            //    Debug.Log($"Граница {side}: дверь новой комнаты={newRoomHasDoor}, дверь соседа={neighbourHasDoor}. Локальные координаты {callingLocal}");
-
-            //    if (newRoomHasDoor && neighbourHasDoor)
-            //    {
-            //        hasAnyValidConnection = true;
-            //    }
-            //}
-
-            //if (!hasAnyValidConnection)
-            //{
-            //    return;
-            //}
+            cell.SetBuilding(building);
         }
+        _placementValidator.ConnectDoors(building);
 
-        Building building = new Building(_currentPlacement, GetCells(cells));
-        GameObject instance = Instantiate(_currentPlacement.RoomData.PreviewPrefab, center.Value, Quaternion.identity);
-
-
-        //foreach (var cell in cells)
-        //{
-        //    cell.SetBuilding(building);
-        //}
-
-
+        _currentPlacement = null;
         _cellIsOccupied = true;
     }
 
@@ -253,90 +234,51 @@ public class GridController : MonoBehaviour
                 position.y > _cells.GetLength(1) - 1)
                 return null;
 
-                center += _cells[position.x, position.y].Center;
+            center += _cells[position.x, position.y].Center;
         }
 
         return center / positions.Count;
     }
+    private Vector3? GetCellsCenter(List<CellObject> cells)
+    {
+        Vector3 center = Vector3.zero;
+
+        foreach (var cell in cells)
+        {
+            if (cell.XIndex < 0 ||
+                cell.ZIndex < 0 ||
+                cell.XIndex > _cells.GetLength(0) - 1 ||
+                cell.ZIndex > _cells.GetLength(1) - 1)
+            {
+                return null;
+            }
+
+
+            center += _cells[cell.XIndex, cell.ZIndex].Center;
+        }
+
+        return center / cells.Count;
+    }
     private List<CellObject> GetCells(List<Vector2Int> positions)
     {
-        List <CellObject> cells = new List<CellObject>();
+        List<CellObject> cells = new List<CellObject>();
 
-        foreach (Vector2Int position in positions) 
+        foreach (Vector2Int position in positions)
         {
             cells.Add(_cells[position.x, position.y]);
         }
 
         return cells;
     }
+    private void UpdatePreview()
+    {
+        RaycastHit hit;
 
+        if (!TryGetTerrainHit(out hit))
+            return;
 
-
-
-    //private bool RoomHasDoor(Vector2Int localCoord, DoorSideEnum side)
-    //{
-    //    int wallIndex = (side == DoorSideEnum.North || side == DoorSideEnum.South) ? localCoord.x : localCoord.y;
-
-    //    foreach (var door in _roomData.Room.Doors)
-    //    {
-    //        if (door.Side == side && door.Index == wallIndex)
-    //            return true;
-    //    }
-
-    //    return false;
-    //}
-    //public bool NeighbourHasDoor(CellObject cell, DoorSideEnum doorSide)
-    //{
-    //    Vector2Int? localCord = cell.Building.WorldToLocal(cell);
-
-    //    if (localCord != null)
-    //    {
-    //        int localIndex = cell.Building.GetWallIndex(localCord, doorSide);
-
-    //        return cell.Building.HasDoor(doorSide, localIndex);
-    //    }
-
-    //    return false;
-    //}
-
-    //private List<(Vector2Int callingLocal, CellObject neighbourCell, DoorSideEnum side)> GetNeighbourCells(Dictionary<Vector2Int, CellObject> cells)
-    //{
-    //    var result = new List<(Vector2Int, CellObject, DoorSideEnum)>();
-
-    //    var directions = new (int dx, int dz, DoorSideEnum side)[]
-    //    {
-    //        (1, 0, DoorSideEnum.East),
-    //        (-1, 0, DoorSideEnum.West),
-    //        (0, 1, DoorSideEnum.North),
-    //        (0, -1, DoorSideEnum.South)
-    //    };
-    //    foreach (var cell in cells)
-    //    {
-    //        foreach (var direction in directions)
-    //        {
-    //            int x = cell.Value.XIndex + direction.dx;
-    //            int z = cell.Value.ZIndex + direction.dz;
-
-    //            if (x >= 0 && x < _cells.GetLength(0) &&
-    //                z >= 0 && z < _cells.GetLength(1))
-    //            {
-    //                CellObject neighbourCandidate = _cells[x, z];
-
-    //                if (_cells[x, z].IsOccupied && !cells.ContainsValue(neighbourCandidate))
-    //                {
-    //                    result.Add((cell.Key, neighbourCandidate, direction.side));
-    //                }
-    //            }
-
-    //        }
-    //    }
-
-    //    Debug.Log("Нет соседа");
-    //    return result;
-    //}
-
-
-
+        UpdatePlacementPreview(hit.point);
+    }
     private void BuildGrid()
     {
         int countXCell = gridXSize + marginSize * 2;
@@ -384,5 +326,19 @@ public class GridController : MonoBehaviour
             Vector3 size = new Vector3(cellSize, 1f, cellSize);
             Gizmos.DrawWireCube(center, size);
         }
+
+        //if (_placementValidator.DebugNeighbours.Count != 0)
+        //{
+        //    Gizmos.color = Color.blue;
+        //    List<CellObject> test = GetCells(_placementValidator.DebugNeighbours);
+        //    int t = 0;
+        //    foreach (var ne in test)
+        //    {
+        //        Vector3 center = new Vector3(ne.Center.x, _terrainPosition.y + 6, ne.Center.z);
+        //        Vector3 size = new Vector3(cellSize, 1f, cellSize);
+        //        Gizmos.DrawCube(center, size);
+        //        t += 10;
+        //    }
+        //}
     }
 }

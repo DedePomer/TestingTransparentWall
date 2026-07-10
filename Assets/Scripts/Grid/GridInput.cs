@@ -7,9 +7,11 @@ public class GridInput : MonoBehaviour
     [Header("Inputs")]
     [SerializeField] private InputActionReference mousePositionAction;
     [SerializeField] private InputActionReference mouseLeftButtonClickAction;
+    [SerializeField] private InputActionReference mouseRightButtonClickAction;
     [SerializeField] private InputActionReference spaceButtonClickAction;
 
     public event Action OnMouseLeftButtonClicked;
+    public event Action OnMouseRightButtonClicked;
     public event Action OnSpaceButtonClicked;
 
     public Vector2 MousePositionVector { get; private set; }
@@ -19,9 +21,11 @@ public class GridInput : MonoBehaviour
         mousePositionAction?.action.Enable();
         mouseLeftButtonClickAction?.action.Enable();
         spaceButtonClickAction?.action.Enable();
+        mouseRightButtonClickAction?.action.Enable();
 
         spaceButtonClickAction.action.performed += OnSpaceClick;
-        mouseLeftButtonClickAction.action.performed += OnMouseClick;
+        mouseRightButtonClickAction.action.performed += OnMouseRightClick;
+        mouseLeftButtonClickAction.action.performed += OnMouseLeftClick;
     }
 
     private void OnDisable()
@@ -29,9 +33,11 @@ public class GridInput : MonoBehaviour
         mousePositionAction?.action.Disable();
         mouseLeftButtonClickAction?.action.Disable();
         spaceButtonClickAction?.action.Disable();
+        mouseRightButtonClickAction?.action.Disable();
 
         spaceButtonClickAction.action.performed -= OnSpaceClick;
-        mouseLeftButtonClickAction.action.performed -= OnMouseClick;
+        mouseRightButtonClickAction.action.performed -= OnMouseRightClick;
+        mouseLeftButtonClickAction.action.performed -= OnMouseLeftClick;
     }
 
     private void Update()
@@ -39,9 +45,14 @@ public class GridInput : MonoBehaviour
         MousePositionVector = mousePositionAction.action.ReadValue<Vector2>();
     }
 
-    private void OnMouseClick(InputAction.CallbackContext context)
+    private void OnMouseLeftClick(InputAction.CallbackContext context)
     {
         OnMouseLeftButtonClicked?.Invoke();
+    }
+
+    private void OnMouseRightClick(InputAction.CallbackContext context)
+    {
+        OnMouseRightButtonClicked?.Invoke();
     }
 
     private void OnSpaceClick(InputAction.CallbackContext context)

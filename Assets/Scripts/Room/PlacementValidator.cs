@@ -7,6 +7,7 @@ public class PlacementValidator
 {
     private readonly CellObject[,] _cells;
 
+
     public PlacementValidator(CellObject[,] cells)
     {
         _cells = cells;
@@ -20,9 +21,9 @@ public class PlacementValidator
             return false;
         }
 
-        foreach (Vector2Int ocuupiedCells in placement.GetOccupiedCells())
+        foreach (Vector2Int ocuupiedCell in placement.GetOccupiedCells())
         {
-            CellObject cell = GetCell(ocuupiedCells);
+            CellObject cell = GetCell(ocuupiedCell);
 
             
 
@@ -35,7 +36,10 @@ public class PlacementValidator
             {
                 return false;
             }
+
+
         }
+
 
         return true;
     }
@@ -54,7 +58,96 @@ public class PlacementValidator
         return _cells[position.x, position.y];
     }
 
+    public bool HasDoorConnection(RoomPlacement placement)
+    {
+        var doors = placement.GetDoorPositions();
 
+        foreach (DoorData door in doors)
+        {
+            Vector2Int neighbourPosition =
+                door.LocalPosition + DoorSideUtils.ToVector(door.Side);
+
+            CellObject neighbourCell = GetCell(neighbourPosition);
+
+            if (neighbourCell == null)
+                continue;
+
+            if (!neighbourCell.IsOccupied)
+                continue;
+
+            Building neighbourBuilding = neighbourCell.Building;
+
+            if (neighbourBuilding == null)
+                continue;
+
+
+            foreach (DoorData neighbourDoor in neighbourBuilding.Doors)
+            {
+                if (neighbourDoor.LocalPosition != neighbourPosition)
+                    continue;
+
+                if (neighbourDoor.Side !=
+                    DoorSideUtils.GetOppositeSide(door.Side))
+                    continue;
+
+
+                Debug.Log(
+                    $"Найдена связь {door.Side} - {neighbourDoor.Side}");
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void ConnectDoors(Building building)
+    {
+        foreach (DoorData door in building.Doors)
+        {
+            Vector2Int neighbourPosition =
+                door.LocalPosition +
+                DoorSideUtils.ToVector(door.Side);
+
+
+            CellObject neighbourCell =
+                GetCell(neighbourPosition);
+
+
+            if (neighbourCell == null)
+                continue;
+
+
+            Building neighbourBuilding =
+                neighbourCell.Building;
+
+
+            if (neighbourBuilding == null)
+                continue;
+
+
+            foreach (DoorData neighbourDoor in neighbourBuilding.Doors)
+            {
+                if (neighbourDoor.LocalPosition != neighbourPosition)
+                    continue;
+
+
+                if (neighbourDoor.Side !=
+                    DoorSideUtils.GetOppositeSide(door.Side))
+                    continue;
+
+
+                Debug.Log(
+                    $"New door: {door.Plug.name} scene={door.Plug.scene.name} active={door.Plug.activeSelf}");
+
+                Debug.Log(
+                    $"Neighbour door: {neighbourDoor.Plug.name} scene={neighbourDoor.Plug.scene.name} active={neighbourDoor.Plug.activeSelf}");
+
+                door.Plug.SetActive(false);
+                neighbourDoor.Plug.SetActive(false);
+            }
+        }
+    }
 
 
 }

@@ -35,5 +35,29 @@ public static class DoorSideUtils
             _ => side
         };
     }
+
+    public static Vector2Int ToVector(DoorSideEnum side)
+    {
+        return side switch
+        {
+            DoorSideEnum.North => Vector2Int.up,
+            DoorSideEnum.East => Vector2Int.right,
+            DoorSideEnum.South => Vector2Int.down,
+            DoorSideEnum.West => Vector2Int.left,
+            _ => Vector2Int.zero
+        };
+    }
+
+    public static Vector3 ToVector3(DoorSideEnum side)
+    {
+        return side switch
+        {
+            DoorSideEnum.North => Vector3.forward,
+            DoorSideEnum.East => Vector3.right,
+            DoorSideEnum.South => Vector3.back,
+            DoorSideEnum.West => Vector3.left,
+            _ => Vector3.zero
+        };
+    }
 }
 

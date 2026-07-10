@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
 public class RoomPlacement
 {
@@ -68,7 +70,9 @@ public class RoomPlacement
     {
         List<DoorData> result = new();
 
-        foreach (DoorData door in RoomData.Room.Doors)
+        var doors = RoomData.Room.Doors;
+
+        foreach (DoorData door in doors)
         {
             DoorData rotatedDoor = RotateDoor(door);
 
@@ -82,15 +86,20 @@ public class RoomPlacement
 
     private DoorData RotateDoor(DoorData door)
     {
+        var localPosition = RotateCell(door.LocalPosition, RoomData.Room.SizeX, RoomData.Room.SizeZ);
+        var side = DoorSideUtils.GetRoatedSide(Rotation, door.Side);
+
         return new DoorData
         {
-            LocalPosition = RotateCell(door.LocalPosition, RoomData.Room.SizeX, RoomData.Room.SizeZ),
+            LocalPosition = localPosition,
 
-            Side = DoorSideUtils.GetRoatedSide(Rotation, door.Side),
+            Side = side,
 
             Plug = door.Plug
         };
     }
+
+
 
     private Vector2Int RotateCell(Vector2Int local, int width, int height)
     {
@@ -100,13 +109,13 @@ public class RoomPlacement
                 local,
 
             RoomRotationEnum.Right90 =>
-                new Vector2Int(height - 1 - local.y, local.x),
+                new Vector2Int(local.y, width - 1 - local.x),
 
             RoomRotationEnum.Right180 =>
                 new Vector2Int(width - 1 - local.x, height - 1 - local.y),
 
             RoomRotationEnum.Right270 =>
-                new Vector2Int(local.y, width - 1 - local.x),
+                new Vector2Int(height - 1 - local.y, local.x),
 
             _ => local
         };

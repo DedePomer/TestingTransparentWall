@@ -1463,9 +1463,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Room
   doors:
-  - Side: 1
+  - LocalPosition: {x: 0, y: 0}
     Plug: {fileID: 8907943328398272042}
-    Index: 0
+    Side: 1
   sizeX: 1
   sizeZ: 1
 --- !u!1 &7021698111043919811
@@ -1877,7 +1877,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1562540948415949446
 Transform:
   m_ObjectHideFlags: 0
